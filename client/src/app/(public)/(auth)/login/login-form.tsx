@@ -22,6 +22,7 @@ export default function LoginForm() {
   const loginMutation = useLoginMutation();
   const { toast } = useToast();
   const router = useRouter();
+
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
@@ -37,6 +38,8 @@ export default function LoginForm() {
       toast({
         description: result.payload.message,
       });
+      router.refresh();
+      router.push("/manage/dashboard");
     } catch (error) {
       handleErrorApi({ error, setError: form.setError });
     }
