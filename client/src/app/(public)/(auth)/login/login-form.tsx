@@ -38,7 +38,6 @@ export default function LoginForm() {
         description: result.payload.message,
       });
     } catch (error) {
-      console.error(error);
       handleErrorApi({ error, setError: form.setError });
     }
   };
@@ -56,12 +55,7 @@ export default function LoginForm() {
           <form
             className="space-y-2 max-w-[600px] flex-shrink-0 w-full"
             noValidate
-            onSubmit={
-              (form.handleSubmit(onSubmit),
-              (err) => {
-                console.warn(err);
-              })
-            }
+            onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className="grid gap-4">
               <FormField
