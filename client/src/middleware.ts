@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAuth = Boolean(request.cookies.get("accessToken"));
 
-  //Chưa đăng nhâp thì chưa cho vào privatepath
+  //Chưa đăng nhâp thì chưa cho vào privatePath
   if (privaitePaths.some((path) => pathname.startsWith(path) && !isAuth)) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
