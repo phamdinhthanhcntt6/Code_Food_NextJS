@@ -7,14 +7,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useForm } from "react-hook-form";
-import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
+import { handleErrorApi } from "@/lib/utils";
+import { useLoginMutation } from "@/queries/useAuth";
 import { LoginBody, LoginBodyType } from "@/schemaValidations/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 
 export default function LoginForm() {
+  const loginMutation = useLoginMutation();
+  const { toast } = useToast();
+  const router = useRouter();
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
@@ -22,6 +29,19 @@ export default function LoginForm() {
       password: "",
     },
   });
+
+  const onSubmit = async (data: LoginBodyType) => {
+    if (loginMutation.isPending) return;
+    try {
+      const result = await loginMutation.mutateAsync(data);
+      toast({
+        description: result.payload.message,
+      });
+    } catch (error) {
+      console.error(error);
+      handleErrorApi({ error, setError: form.setError });
+    }
+  };
 
   return (
     <Card className="mx-auto max-w-sm">
@@ -36,6 +56,12 @@ export default function LoginForm() {
           <form
             className="space-y-2 max-w-[600px] flex-shrink-0 w-full"
             noValidate
+            onSubmit={
+              (form.handleSubmit(onSubmit),
+              (err) => {
+                console.warn(err);
+              })
+            }
           >
             <div className="grid gap-4">
               <FormField
