@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Menu, Package2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu, Package2 } from "lucide-react";
+import Link from "next/link";
 
 import NavItems from "@/app/(public)/nav-items";
 import DarkModeToggle from "@/components/dark-mode-toggle";
@@ -44,7 +44,6 @@ export default function Layout({
                 <Package2 className="h-6 w-6" />
                 <span className="sr-only">Big boy</span>
               </Link>
-
               <NavItems className="text-muted-foreground transition-colors hover:text-foreground" />
             </nav>
           </SheetContent>
