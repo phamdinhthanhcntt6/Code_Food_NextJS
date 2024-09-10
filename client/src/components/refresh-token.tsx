@@ -15,7 +15,6 @@ const UNAUTHENTICATED_PATH = ["/login", "/logout", "/refresh-token"];
 
 const RefreshToken = () => {
   const pathname = usePathname();
-
   useEffect(() => {
     if (UNAUTHENTICATED_PATH.includes(pathname)) return;
 
@@ -39,34 +38,35 @@ const RefreshToken = () => {
 
       const now = Math.round(new Date().getTime() / 1000);
 
-      // if (decodedRefreshToken.exp <= now) return;
+      if (decodedRefreshToken.exp <= now) return;
 
-      // if (
-      //   decodedAccessToken.exp - now <
-      //   (decodedAccessToken.exp - decodedAccessToken.iat) / 3
-      // ) {
-      try {
-        const res = await authApiRequest.refreshToken();
+      if (
+        decodedAccessToken.exp - now <
+        (decodedAccessToken.exp - decodedAccessToken.iat) / 3
+      ) {
+        try {
+          const res = await authApiRequest.refreshToken();
 
-        console.log(res, "1111");
+          console.log(res, "1111");
 
-        setAccessTokenToLocalStorage(res.payload.data.accessToken);
-        setRefreshTokenToLocalStorage(res.payload.data.refreshToken);
-      } catch (error) {
-        clearInterval(interval);
+          setAccessTokenToLocalStorage(res.payload.data.accessToken);
+          setRefreshTokenToLocalStorage(res.payload.data.refreshToken);
+        } catch (error) {
+          clearInterval(interval);
+        }
+        // }
       }
-      // }
+      //Phải gọi lần đầu tiên vì interval sẽ chạy sau thời gian TIME OUT
+      checkAndRefreshToken();
+
+      const TIME_OUT = 1000;
+
+      interval = setInterval(checkAndRefreshToken, TIME_OUT);
+      return () => clearInterval(interval);
     };
-    //Phải gọi lần đầu tiên vì interval sẽ chạy sau thời gian TIME OUT
-    checkAndRefreshToken();
-
-    const TIME_OUT = 1000;
-
-    interval = setInterval(checkAndRefreshToken, TIME_OUT);
-    return () => clearInterval(interval);
   }, [pathname]);
 
-  return <div></div>;
+  return null;
 };
 
 export default RefreshToken;
