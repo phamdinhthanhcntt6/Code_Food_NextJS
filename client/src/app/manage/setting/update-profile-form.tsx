@@ -155,6 +155,7 @@ export default function UpdateProfileForm() {
                     <div className="grid gap-3">
                       <Label htmlFor="name">Tên</Label>
                       <Input
+                        autoComplete="name"
                         id="name"
                         type="text"
                         className="w-full"

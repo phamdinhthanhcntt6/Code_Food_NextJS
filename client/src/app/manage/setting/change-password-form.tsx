@@ -84,6 +84,7 @@ export default function ChangePasswordForm() {
                     <div className="grid gap-3">
                       <Label htmlFor="password">Mật khẩu mới</Label>
                       <Input
+                        autoComplete="current-password"
                         id="password"
                         type="password"
                         className="w-full"

@@ -1,8 +1,9 @@
 "use client";
 
+import RefreshToken from "@/components/refresh-token";
 import {
   getAccessTokenFromLocalStorage,
-  getRefreshTokenToLocalStorage,
+  getRefreshTokenFromLocalStorage,
 } from "@/lib/utils";
 import { useLogoutMutation } from "@/queries/useAuth";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -19,7 +20,7 @@ const LogoutPage = () => {
   useEffect(() => {
     if (
       (refreshTokenFromUrl &&
-        refreshTokenFromUrl !== getRefreshTokenToLocalStorage()) ||
+        refreshTokenFromUrl !== getRefreshTokenFromLocalStorage()) ||
       (accessTokenFromUrl &&
         accessTokenFromUrl !== getAccessTokenFromLocalStorage())
     ) {

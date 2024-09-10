@@ -4,6 +4,7 @@ import {
   ChangePasswordBodyType,
   UpdateMeBodyType,
 } from "@/schemaValidations/account.schema";
+
 const accountApiRequest = {
   profile: () => http.get<AccountResType>("/accounts/me"),
   sProfile: (accessToken: string) =>
@@ -17,4 +18,5 @@ const accountApiRequest = {
   changePassword: (body: ChangePasswordBodyType) =>
     http.put<AccountResType>("/accounts/change-password", body),
 };
+
 export default accountApiRequest;
