@@ -11,9 +11,9 @@ const DashboardPage = async () => {
     const result = await accountApiRequest.sProfile(accessToken);
     name = result.payload.data.name;
   } catch (error: any) {
-    if (error.digest?.include("NEXT_REDIRECT")) {
-      throw error;
-    }
+    // if (error.digest?.include("NEXT_REDIRECT")) {
+    //   throw error;
+    // }
   }
 
   return <div>DashboardPage: {name}</div>;

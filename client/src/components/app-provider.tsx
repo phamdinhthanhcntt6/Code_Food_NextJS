@@ -17,10 +17,9 @@ export default function AppProvider({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <>
-        {children}
         <RefreshToken />
+        {children}
       </>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }

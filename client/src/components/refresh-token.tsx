@@ -15,6 +15,7 @@ const UNAUTHENTICATED_PATH = ["/login", "/logout", "/refresh-token"];
 
 const RefreshToken = () => {
   const pathname = usePathname();
+
   useEffect(() => {
     if (UNAUTHENTICATED_PATH.includes(pathname)) return;
 
@@ -30,6 +31,7 @@ const RefreshToken = () => {
         exp: number;
         iat: number;
       };
+      console.log(decodedAccessToken.iat);
 
       const decodedRefreshToken = jwt.decode(refreshToken) as {
         exp: number;
@@ -47,8 +49,6 @@ const RefreshToken = () => {
         try {
           const res = await authApiRequest.refreshToken();
 
-          console.log(res, "1111");
-
           setAccessTokenToLocalStorage(res.payload.data.accessToken);
           setRefreshTokenToLocalStorage(res.payload.data.refreshToken);
         } catch (error) {
@@ -57,13 +57,13 @@ const RefreshToken = () => {
         // }
       }
       //Phải gọi lần đầu tiên vì interval sẽ chạy sau thời gian TIME OUT
-      checkAndRefreshToken();
-
-      const TIME_OUT = 1000;
-
-      interval = setInterval(checkAndRefreshToken, TIME_OUT);
-      return () => clearInterval(interval);
     };
+
+    checkAndRefreshToken();
+    const TIME_OUT = 1000;
+
+    interval = setInterval(checkAndRefreshToken, TIME_OUT);
+    return () => clearInterval(interval);
   }, [pathname]);
 
   return null;
