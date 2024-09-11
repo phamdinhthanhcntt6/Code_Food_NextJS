@@ -1,6 +1,5 @@
 "use client";
 
-import RefreshToken from "@/components/refresh-token";
 import {
   getAccessTokenFromLocalStorage,
   getRefreshTokenFromLocalStorage,

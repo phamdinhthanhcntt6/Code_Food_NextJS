@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken";
+import authApiRequest from "@/apiRequests/auth";
 import { toast } from "@/components/ui/use-toast";
 import { EntityError } from "@/lib/http";
 import { clsx, type ClassValue } from "clsx";
@@ -51,3 +53,44 @@ export const setAccessTokenToLocalStorage = (value: string) =>
 
 export const setRefreshTokenToLocalStorage = (value: string) =>
   isBrowser && localStorage.setItem("refreshToken", value);
+
+export const checkAndRefreshToken = async (param?: {
+  onError?: () => void;
+  onSuccess?: () => void;
+}) => {
+  const accessToken = getAccessTokenFromLocalStorage();
+  const refreshToken = getRefreshTokenFromLocalStorage();
+
+  if (!accessToken || !refreshToken) return;
+
+  const decodedAccessToken = jwt.decode(accessToken) as {
+    exp: number;
+    iat: number;
+  };
+
+  const decodedRefreshToken = jwt.decode(refreshToken) as {
+    exp: number;
+    iat: number;
+  };
+
+  const now = Math.round(new Date().getTime() / 1000);
+
+  if (decodedRefreshToken.exp <= now) return;
+
+  if (
+    decodedAccessToken.exp - now <
+    (decodedAccessToken.exp - decodedAccessToken.iat) / 3
+  ) {
+    try {
+      const res = await authApiRequest.refreshToken();
+
+      setAccessTokenToLocalStorage(res.payload.data.accessToken);
+      setRefreshTokenToLocalStorage(res.payload.data.refreshToken);
+      param?.onSuccess && param.onSuccess();
+    } catch (error) {
+      param?.onError && param.onError();
+    }
+    // }
+  }
+  //Phải gọi lần đầu tiên vì interval sẽ chạy sau thời gian TIME OUT
+};
