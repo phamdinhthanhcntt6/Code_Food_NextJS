@@ -1,13 +1,14 @@
 "use client";
 
 import { checkAndRefreshToken } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const UNAUTHENTICATED_PATH = ["/login", "/logout", "/refresh-token"];
 
 const RefreshToken = () => {
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     if (UNAUTHENTICATED_PATH.includes(pathname)) return;
@@ -17,13 +18,24 @@ const RefreshToken = () => {
     checkAndRefreshToken({
       onError: () => {
         clearInterval(interval);
+        router.push("/login");
       },
     });
+
     const TIME_OUT = 1000;
 
-    interval = setInterval(checkAndRefreshToken, TIME_OUT);
+    interval = setInterval(
+      () =>
+        checkAndRefreshToken({
+          onError: () => {
+            clearInterval(interval);
+            router.push("/login");
+          },
+        }),
+      TIME_OUT
+    );
     return () => clearInterval(interval);
-  }, [pathname]);
+  }, [pathname, router]);
 
   return null;
 };
