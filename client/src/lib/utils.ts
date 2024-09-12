@@ -78,7 +78,7 @@ export const checkAndRefreshToken = async (param?: {
     iat: number;
   };
 
-  const now = Math.round(new Date().getTime() / 1000);
+  const now = new Date().getTime() / 1000 - 1;
 
   if (decodedRefreshToken.exp <= now) {
     removeTokenFromLocalStorage();
@@ -97,7 +97,5 @@ export const checkAndRefreshToken = async (param?: {
     } catch (error) {
       param?.onError && param.onError();
     }
-    // }
   }
-  //Phải gọi lần đầu tiên vì interval sẽ chạy sau thời gian TIME OUT
 };

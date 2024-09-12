@@ -1,8 +1,19 @@
 "use client";
 
 import RefreshToken from "@/components/refresh-token";
+import {
+  getAccessTokenFromLocalStorage,
+  removeTokenFromLocalStorage,
+} from "@/lib/utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactNode } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,13 +24,42 @@ const queryClient = new QueryClient({
   },
 });
 
+const AppContext = createContext({
+  isAuth: false,
+  setIsAuth: (isAuth: boolean) => {},
+});
+
+export const useAppContext = () => {
+  return useContext(AppContext);
+};
+
 export default function AppProvider({ children }: { children: ReactNode }) {
+  const [isAuthState, setIsAuthState] = useState(false);
+
+  useEffect(() => {
+    const accessToken = getAccessTokenFromLocalStorage();
+    if (accessToken) {
+      setIsAuthState(true);
+    }
+  }, []);
+
+  const setIsAuth = useCallback((isAuth: boolean) => {
+    if (isAuth) {
+      setIsAuthState(true);
+    } else {
+      setIsAuthState(false);
+      removeTokenFromLocalStorage();
+    }
+  }, []);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <>
-        <RefreshToken />
-        {children}
-      </>
-    </QueryClientProvider>
+    <AppContext.Provider value={{ isAuth: false, setIsAuth }}>
+      <QueryClientProvider client={queryClient}>
+        <>
+          <RefreshToken />
+          {children}
+        </>
+      </QueryClientProvider>
+    </AppContext.Provider>
   );
 }

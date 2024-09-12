@@ -1,4 +1,6 @@
 "use client";
+
+import { useAppContext } from "@/components/app-provider";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,17 +13,28 @@ import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { handleErrorApi } from "@/lib/utils";
+import { handleErrorApi, removeTokenFromLocalStorage } from "@/lib/utils";
 import { useLoginMutation } from "@/queries/useAuth";
 import { LoginBody, LoginBodyType } from "@/schemaValidations/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 export default function LoginForm() {
   const loginMutation = useLoginMutation();
   const { toast } = useToast();
   const router = useRouter();
+  const { setIsAuth } = useAppContext();
+
+  const searchParam = useSearchParams();
+  const clearToken = searchParam.get("clearToken");
+
+  useEffect(() => {
+    if (clearToken) {
+      setIsAuth(false);
+    }
+  }, [clearToken, setIsAuth]);
 
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),

@@ -10,12 +10,16 @@ export function middleware(request: NextRequest) {
 
   //Chưa đăng nhâp thì chưa cho vào privatePaths
   if (privatePaths.some((path) => pathname.startsWith(path)) && !refreshToken) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const url = new URL("/login", request.url);
+    url.searchParams.set("clearToken", "true");
+    return NextResponse.redirect(url);
   }
+
   //Đã đăng nhập thì không cho vào unAuthPaths
   if (unAuthPaths.some((path) => pathname.startsWith(path)) && refreshToken) {
     return NextResponse.redirect(new URL("/", request.url));
   }
+
   //Đã đăng nhập nhưng access token hết hạn
   if (
     privatePaths.some((path) => pathname.startsWith(path)) &&
