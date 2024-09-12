@@ -27,7 +27,6 @@ const menuItems = [
 
 export default function NavItems({ className }: { className?: string }) {
   const { isAuth } = useAppContext();
-  console.log(">>>>>>>>", isAuth);
 
   return menuItems.map((item) => {
     if (
